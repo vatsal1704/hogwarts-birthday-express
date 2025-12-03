@@ -1,13 +1,49 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { MagicParticles } from "@/components/MagicParticles";
+import { HogwartsScene } from "@/components/scenes/HogwartsScene";
+import { GatesScene } from "@/components/scenes/GatesScene";
+import { OwlScene } from "@/components/scenes/OwlScene";
+import { LetterScene } from "@/components/scenes/LetterScene";
+
+type Scene = "hogwarts" | "gates" | "owl" | "letter";
 
 const Index = () => {
+  const [currentScene, setCurrentScene] = useState<Scene>("hogwarts");
+
+  const handleHogwartsComplete = () => {
+    setCurrentScene("gates");
+  };
+
+  const handleGatesComplete = () => {
+    setCurrentScene("owl");
+  };
+
+  const handleLetterClick = () => {
+    setCurrentScene("letter");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main className="relative min-h-screen overflow-hidden bg-background">
+      {/* Magic Particles (visible in most scenes) */}
+      {currentScene !== "letter" && <MagicParticles />}
+
+      {/* Scenes */}
+      {currentScene === "hogwarts" && (
+        <HogwartsScene onComplete={handleHogwartsComplete} />
+      )}
+
+      {currentScene === "gates" && (
+        <GatesScene onComplete={handleGatesComplete} />
+      )}
+
+      {currentScene === "owl" && (
+        <OwlScene onLetterClick={handleLetterClick} />
+      )}
+
+      {currentScene === "letter" && (
+        <LetterScene recipientName="Wizard" />
+      )}
+    </main>
   );
 };
 
