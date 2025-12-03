@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { MagicParticles } from "@/components/MagicParticles";
+import { PlatformScene } from "@/components/scenes/PlatformScene";
 import { HogwartsScene } from "@/components/scenes/HogwartsScene";
 import { GatesScene } from "@/components/scenes/GatesScene";
 import { OwlScene } from "@/components/scenes/OwlScene";
 import { LetterScene } from "@/components/scenes/LetterScene";
 
-type Scene = "hogwarts" | "gates" | "owl" | "letter";
+type Scene = "platform" | "hogwarts" | "gates" | "owl" | "letter";
 
 const Index = () => {
-  const [currentScene, setCurrentScene] = useState<Scene>("hogwarts");
+  const [currentScene, setCurrentScene] = useState<Scene>("platform");
+
+  const handlePlatformComplete = () => {
+    setCurrentScene("hogwarts");
+  };
 
   const handleHogwartsComplete = () => {
     setCurrentScene("gates");
@@ -28,6 +33,10 @@ const Index = () => {
       {currentScene !== "letter" && <MagicParticles />}
 
       {/* Scenes */}
+      {currentScene === "platform" && (
+        <PlatformScene onComplete={handlePlatformComplete} />
+      )}
+
       {currentScene === "hogwarts" && (
         <HogwartsScene onComplete={handleHogwartsComplete} />
       )}
@@ -41,7 +50,7 @@ const Index = () => {
       )}
 
       {currentScene === "letter" && (
-        <LetterScene recipientName="Wizard" />
+        <LetterScene recipientName="Kanishka" />
       )}
     </main>
   );
