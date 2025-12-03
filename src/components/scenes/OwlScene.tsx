@@ -10,6 +10,7 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
   const [owlFlying, setOwlFlying] = useState(false);
   const [showLetter, setShowLetter] = useState(false);
   const [owlGone, setOwlGone] = useState(false);
+  const [letterClicked, setLetterClicked] = useState(false);
 
   useEffect(() => {
     // Start owl animation after scene enters
@@ -33,6 +34,16 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
       return () => clearTimeout(timer);
     }
   }, [owlFlying]);
+
+  const handleLetterClick = () => {
+    if (letterClicked) return;
+    setLetterClicked(true);
+    
+    // Add opening animation then transition
+    setTimeout(() => {
+      onLetterClick();
+    }, 800);
+  };
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-gradient-night scene-enter">
@@ -72,17 +83,35 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
       {showLetter && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div 
-            className="letter-drop cursor-pointer letter-hover"
-            onClick={onLetterClick}
+            className={cn(
+              "letter-drop cursor-pointer transition-all duration-500",
+              letterClicked ? "scale-150 opacity-0" : "hover:scale-110 hover:rotate-2"
+            )}
+            onClick={handleLetterClick}
           >
-            <img
-              src={letterImage}
-              alt="Hogwarts acceptance letter"
-              className="w-48 h-60 md:w-64 md:h-80 object-contain drop-shadow-2xl"
-            />
-            <p className="font-magical text-lg md:text-xl text-primary text-center mt-4 glow-gold animate-pulse">
-              Click to open
-            </p>
+            <div className="relative">
+              <img
+                src={letterImage}
+                alt="Hogwarts letter for Kanishka"
+                className="w-48 h-60 md:w-64 md:h-80 object-contain drop-shadow-2xl"
+              />
+              {/* Name on envelope */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="font-magical text-parchment-dark text-lg md:text-xl mt-4 tracking-wider">
+                  Kanishka
+                </p>
+              </div>
+            </div>
+            
+            {/* Click instruction */}
+            <div className="mt-6 text-center">
+              <button 
+                className="btn-spell font-magical text-lg md:text-xl px-6 py-3"
+                onClick={handleLetterClick}
+              >
+                <span className="glow-gold">Click to Open</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -90,12 +119,16 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-start pt-20 px-4">
         <h2 className="font-magical text-3xl md:text-5xl text-primary glow-gold text-center mb-4">
-          An Owl Approaches
+          {!showLetter ? "An Owl Approaches" : "A Letter for Kanishka"}
         </h2>
         <p className="font-elegant text-lg md:text-xl text-foreground/80 tracking-widest text-center">
-          {!showLetter ? "A message from afar..." : "Your letter has arrived!"}
+          {!showLetter ? "A message from afar..." : "Your magical letter has arrived!"}
         </p>
       </div>
     </div>
   );
 };
+
+function cn(...classes: (string | boolean | undefined)[]) {
+  return classes.filter(Boolean).join(" ");
+}

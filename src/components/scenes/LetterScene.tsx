@@ -1,87 +1,124 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import parchmentImage from "@/assets/parchment.jpg";
 
 interface LetterSceneProps {
   recipientName?: string;
 }
 
-const birthdayMessages = [
-  "Dearest Friend,",
-  "",
-  "On this most magical of days, the wizarding world celebrates the anniversary of your arrival.",
-  "",
-  "You possess a magic that no spell can teach — the gift of kindness, the charm of laughter, and a heart braver than any Gryffindor.",
-  "",
-  "May your new year be filled with:",
-  "✨ Adventures as thrilling as a Quidditch match",
-  "✨ Friendships as loyal as house-elves",
-  "✨ Dreams as boundless as the Hogwarts library",
-  "✨ Joy as warm as butterbeer on a cold day",
-  "",
-  "Remember: Happiness can be found even in the darkest of times, if one only remembers to turn on the light.",
-  "",
-  "Today, all the candles in the Great Hall glow in your honor. The house ghosts raise their spectral goblets. Even Peeves promises to behave (well, mostly).",
-  "",
-  "May every wish you make come true, every dream take flight like a golden snitch, and every moment sparkle with the magic that is uniquely you.",
-  "",
-  "Happy Birthday, dear wizard!",
-  "",
-  "With love and magic,",
-  "Your Secret Admirer ⚡",
+interface MessageLine {
+  text: string;
+  isTitle?: boolean;
+  isSignature?: boolean;
+  isEmpty?: boolean;
+}
+
+const birthdayMessages: MessageLine[] = [
+  { text: "Happy Birthday", isTitle: true },
+  { text: "", isEmpty: true },
+  { text: "Dearest Kanishka,", isSignature: false },
+  { text: "", isEmpty: true },
+  { text: "On this most magical of days, the wizarding world celebrates the anniversary of your arrival." },
+  { text: "", isEmpty: true },
+  { text: "You possess a magic that no spell can teach — the gift of kindness, the charm of laughter, and a heart braver than any Gryffindor." },
+  { text: "", isEmpty: true },
+  { text: "May all your wishes come true..." },
+  { text: "", isEmpty: true },
+  { text: "✨ Adventures as thrilling as a Quidditch match" },
+  { text: "✨ Friendships as loyal as house-elves" },
+  { text: "✨ Dreams as boundless as the Hogwarts library" },
+  { text: "✨ Joy as warm as butterbeer on a cold day" },
+  { text: "", isEmpty: true },
+  { text: "Remember: Happiness can be found even in the darkest of times, if one only remembers to turn on the light." },
+  { text: "", isEmpty: true },
+  { text: "Today, all the candles in the Great Hall glow in your honor." },
+  { text: "", isEmpty: true },
+  { text: "With love and magic,", isSignature: true },
+  { text: "Your Secret Admirer ⚡", isSignature: true },
 ];
 
-export const LetterScene = ({ recipientName = "Friend" }: LetterSceneProps) => {
-  const [displayedLines, setDisplayedLines] = useState<string[]>([]);
-  const [currentLineIndex, setCurrentLineIndex] = useState(0);
-  const [currentCharIndex, setCurrentCharIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
+export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) => {
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isErasing, setIsErasing] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+  const [completedMessages, setCompletedMessages] = useState<MessageLine[]>([]);
+  const [isComplete, setIsComplete] = useState(false);
 
-  // Replace "Friend" with actual name if provided
-  const messages = birthdayMessages.map(line => 
-    line.replace("Dearest Friend,", `Dearest ${recipientName},`)
-  );
+  // Replace name in messages
+  const messages = birthdayMessages.map(msg => ({
+    ...msg,
+    text: msg.text.replace("Kanishka", recipientName)
+  }));
 
+  const currentMessage = messages[currentMessageIndex];
+
+  // Typing effect
   useEffect(() => {
-    if (currentLineIndex >= messages.length) {
-      setIsTyping(false);
+    if (!showMessage || isComplete) return;
+    if (!currentMessage) {
+      setIsComplete(true);
       return;
     }
 
-    const currentLine = messages[currentLineIndex];
-    
-    if (currentLine === "") {
-      // Empty line - add it and move to next
-      setDisplayedLines(prev => [...prev, ""]);
-      setCurrentLineIndex(prev => prev + 1);
-      setCurrentCharIndex(0);
-      return;
-    }
-
-    if (currentCharIndex >= currentLine.length) {
-      // Line complete, move to next
+    // Handle empty lines
+    if (currentMessage.isEmpty) {
+      setCompletedMessages(prev => [...prev, currentMessage]);
       setTimeout(() => {
-        setCurrentLineIndex(prev => prev + 1);
-        setCurrentCharIndex(0);
+        setCurrentMessageIndex(prev => prev + 1);
       }, 300);
       return;
     }
 
-    // Type next character
-    const timer = setTimeout(() => {
-      if (currentCharIndex === 0) {
-        setDisplayedLines(prev => [...prev, currentLine.charAt(0)]);
+    if (isErasing) {
+      // Erasing effect
+      if (displayText.length > 0) {
+        const timer = setTimeout(() => {
+          setDisplayText(prev => prev.slice(0, -1));
+        }, 20);
+        return () => clearTimeout(timer);
       } else {
-        setDisplayedLines(prev => {
-          const newLines = [...prev];
-          newLines[newLines.length - 1] = currentLine.slice(0, currentCharIndex + 1);
-          return newLines;
-        });
+        // Done erasing, move to completed and next message
+        setIsErasing(false);
+        setCurrentMessageIndex(prev => prev + 1);
       }
-      setCurrentCharIndex(prev => prev + 1);
-    }, 30);
+    } else {
+      // Typing effect
+      if (displayText.length < currentMessage.text.length) {
+        const timer = setTimeout(() => {
+          setDisplayText(currentMessage.text.slice(0, displayText.length + 1));
+        }, 40);
+        return () => clearTimeout(timer);
+      } else {
+        // Done typing, wait then start erasing (except for last few messages)
+        const isLastSection = currentMessageIndex >= messages.length - 3;
+        
+        if (isLastSection) {
+          // Don't erase the last messages, just add them
+          setCompletedMessages(prev => [...prev, currentMessage]);
+          setDisplayText("");
+          setTimeout(() => {
+            setCurrentMessageIndex(prev => prev + 1);
+          }, 500);
+        } else {
+          // Wait then erase
+          const timer = setTimeout(() => {
+            setCompletedMessages(prev => [...prev, currentMessage]);
+            setDisplayText("");
+            setCurrentMessageIndex(prev => prev + 1);
+          }, 1500);
+          return () => clearTimeout(timer);
+        }
+      }
+    }
+  }, [displayText, isErasing, currentMessage, showMessage, currentMessageIndex, messages.length, isComplete]);
 
+  // Start the animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowMessage(true);
+    }, 1000);
     return () => clearTimeout(timer);
-  }, [currentLineIndex, currentCharIndex, messages]);
+  }, []);
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background scene-enter">
@@ -119,10 +156,10 @@ export const LetterScene = ({ recipientName = "Friend" }: LetterSceneProps) => {
             }}
           >
             {/* Parchment overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-parchment/30 via-transparent to-parchment/30" />
+            <div className="absolute inset-0 bg-gradient-to-b from-parchment/40 via-parchment/20 to-parchment/40" />
             
             {/* Content */}
-            <div className="relative p-8 md:p-12 lg:p-16">
+            <div className="relative p-8 md:p-12 lg:p-16 min-h-[70vh]">
               {/* Hogwarts Header */}
               <div className="text-center mb-8">
                 <h1 className="font-magical text-2xl md:text-3xl text-parchment-dark mb-2">
@@ -135,28 +172,53 @@ export const LetterScene = ({ recipientName = "Friend" }: LetterSceneProps) => {
               </div>
 
               {/* Letter Content */}
-              <div className="space-y-2 min-h-[400px]">
-                {displayedLines.map((line, index) => (
-                  <p 
+              <div className="space-y-3 min-h-[400px]">
+                {/* Completed messages with slide-up animation */}
+                {completedMessages.map((msg, index) => (
+                  <div
                     key={index}
+                    className="message-line-enter"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    {msg.isEmpty ? (
+                      <div className="h-4" />
+                    ) : (
+                      <p 
+                        className={cn(
+                          "font-parchment leading-relaxed transition-all duration-500",
+                          msg.isTitle && "text-3xl md:text-4xl font-magical text-center text-parchment-dark mb-4",
+                          msg.isSignature && "text-lg md:text-xl italic",
+                          !msg.isTitle && !msg.isSignature && "text-lg md:text-xl text-parchment-dark",
+                          msg.text.startsWith("✨") && "pl-4"
+                        )}
+                      >
+                        {msg.text}
+                      </p>
+                    )}
+                  </div>
+                ))}
+
+                {/* Currently typing message */}
+                {showMessage && currentMessage && !currentMessage.isEmpty && !isComplete && (
+                  <p 
                     className={cn(
-                      "font-parchment text-lg md:text-xl text-parchment-dark leading-relaxed",
-                      line === "" && "h-4",
-                      line.startsWith("✨") && "pl-4"
+                      "font-parchment leading-relaxed",
+                      currentMessage.isTitle && "text-3xl md:text-4xl font-magical text-center text-parchment-dark mb-4",
+                      currentMessage.isSignature && "text-lg md:text-xl italic text-parchment-dark",
+                      !currentMessage.isTitle && !currentMessage.isSignature && "text-lg md:text-xl text-parchment-dark",
+                      currentMessage.text.startsWith("✨") && "pl-4"
                     )}
                   >
-                    {line}
-                    {index === displayedLines.length - 1 && isTyping && (
-                      <span className="animate-pulse ml-1">|</span>
-                    )}
+                    {displayText}
+                    <span className="animate-pulse text-primary">|</span>
                   </p>
-                ))}
+                )}
               </div>
 
               {/* Wax Seal */}
-              {!isTyping && (
-                <div className="flex justify-center mt-8 text-reveal">
-                  <div className="w-16 h-16 rounded-full bg-wax-red flex items-center justify-center shadow-lg">
+              {isComplete && (
+                <div className="flex justify-center mt-8 animate-fade-in">
+                  <div className="w-16 h-16 rounded-full bg-wax-red flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
                     <span className="font-magical text-foreground text-xl">H</span>
                   </div>
                 </div>
@@ -169,14 +231,40 @@ export const LetterScene = ({ recipientName = "Friend" }: LetterSceneProps) => {
         </div>
       </div>
 
-      {/* Return hint */}
-      {!isTyping && (
-        <div className="absolute bottom-8 left-0 right-0 text-center text-reveal">
+      {/* Footer message */}
+      {isComplete && (
+        <div className="absolute bottom-8 left-0 right-0 text-center animate-fade-in">
           <p className="font-elegant text-foreground/60 text-sm tracking-widest">
             May your birthday be truly magical ⚡
           </p>
         </div>
       )}
+
+      <style>{`
+        @keyframes messageFadeSlideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .message-line-enter {
+          animation: messageFadeSlideUp 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .animate-fade-in {
+          animation: fadeIn 1s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };
