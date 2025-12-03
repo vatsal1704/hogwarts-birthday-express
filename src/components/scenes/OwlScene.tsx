@@ -38,11 +38,11 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
   const handleLetterClick = () => {
     if (letterClicked) return;
     setLetterClicked(true);
-    
+
     // Add opening animation then transition
     setTimeout(() => {
       onLetterClick();
-    }, 800);
+    }, 200);
   };
 
   return (
@@ -81,13 +81,12 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
 
       {/* Letter */}
       {showLetter && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div 
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <div
             className={cn(
-              "letter-drop cursor-pointer transition-all duration-500",
-              letterClicked ? "scale-150 opacity-0" : "hover:scale-110 hover:rotate-2"
+              "letter-drop transition-all duration-500",
+              letterClicked ? "scale-150 opacity-0" : "hover:scale-105 hover:rotate-1"
             )}
-            onClick={handleLetterClick}
           >
             <div className="relative">
               <img
@@ -102,11 +101,11 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
                 </p>
               </div>
             </div>
-            
+
             {/* Click instruction */}
             <div className="mt-6 text-center">
-              <button 
-                className="btn-spell font-magical text-lg md:text-xl px-6 py-3"
+              <button
+                className="btn-spell font-magical text-lg md:text-xl px-6 py-3 cursor-pointer hover:scale-110 transition-transform"
                 onClick={handleLetterClick}
               >
                 <span className="glow-gold">Click to Open</span>

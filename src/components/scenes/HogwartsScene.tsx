@@ -14,7 +14,7 @@ export const HogwartsScene = ({ onComplete }: HogwartsSceneProps) => {
   const handleAlohomora = () => {
     setLightsOn(true);
     setIsTransitioning(true);
-    
+
     setTimeout(() => {
       onComplete();
     }, 2500);
@@ -30,7 +30,7 @@ export const HogwartsScene = ({ onComplete }: HogwartsSceneProps) => {
         )}
         style={{ backgroundImage: `url(${hogwartsDark})` }}
       />
-      
+
       {/* Lit castle background */}
       <div
         className={cn(
@@ -50,10 +50,10 @@ export const HogwartsScene = ({ onComplete }: HogwartsSceneProps) => {
       )}>
         {/* Hogwarts Title */}
         <div className="mb-8 text-center">
-          <h1 className="font-magical text-4xl md:text-6xl lg:text-7xl text-primary glow-gold mb-4">
+          <h1 className="font-magical text-3xl md:text-6xl lg:text-7xl text-primary glow-gold mb-4">
             HOGWARTS
           </h1>
-          <p className="font-elegant text-lg md:text-xl text-foreground/80 tracking-[0.3em] uppercase">
+          <p className="font-elegant text-base md:text-xl text-foreground/80 tracking-[0.3em] uppercase">
             School of Witchcraft and Wizardry
           </p>
         </div>

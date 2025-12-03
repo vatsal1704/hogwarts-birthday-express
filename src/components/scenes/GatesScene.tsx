@@ -13,7 +13,7 @@ export const GatesScene = ({ onComplete }: GatesSceneProps) => {
   const handleWingardium = () => {
     setGatesOpen(true);
     setIsTransitioning(true);
-    
+
     setTimeout(() => {
       onComplete();
     }, 2500);
@@ -33,11 +33,11 @@ export const GatesScene = ({ onComplete }: GatesSceneProps) => {
       {/* Animated gate overlay effect */}
       {gatesOpen && (
         <div className="absolute inset-0 flex">
-          <div 
+          <div
             className="w-1/2 h-full bg-background/80 origin-left gate-left-open"
             style={{ transformStyle: "preserve-3d" }}
           />
-          <div 
+          <div
             className="w-1/2 h-full bg-background/80 origin-right gate-right-open"
             style={{ transformStyle: "preserve-3d" }}
           />
@@ -54,10 +54,10 @@ export const GatesScene = ({ onComplete }: GatesSceneProps) => {
       )}>
         {/* Title */}
         <div className="mb-8 text-center">
-          <h2 className="font-magical text-3xl md:text-5xl lg:text-6xl text-primary glow-gold mb-4">
+          <h2 className="font-magical text-2xl md:text-5xl lg:text-6xl text-primary glow-gold mb-4">
             The Gates Await
           </h2>
-          <p className="font-elegant text-lg md:text-xl text-foreground/80 tracking-widest">
+          <p className="font-elegant text-base md:text-xl text-foreground/80 tracking-widest">
             A powerful spell is needed to enter
           </p>
         </div>

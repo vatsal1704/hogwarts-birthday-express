@@ -1,62 +1,56 @@
-import { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+import { useEffect, useRef } from "react";
 
-// Using a royalty-free magical/fantasy music URL
-// You can replace this with your own Harry Potter theme music URL
-const MUSIC_URL = "https://assets.mixkit.co/music/preview/mixkit-fantasy-game-adventure-presentation-668.mp3";
+// Harry Potter Theme (Hedwig's Theme)
+const MUSIC_URL = "https://ia801307.us.archive.org/28/items/HarryPotter-hedwigstheme/Harry_Potter_Theme_Song_Hedwigs_Theme.mp3";
 
 export const MusicPlayer = () => {
-  const [isMuted, setIsMuted] = useState(true);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    // Create audio element
-    const audio = new Audio(MUSIC_URL);
-    audio.loop = true;
-    audio.volume = 0.3;
-    audioRef.current = audio;
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    // Set initial volume
+    audio.volume = 0.6;
+
+    const playAudio = () => {
+      if (audio.paused) {
+        audio.play()
+          .then(() => {
+            // console.log("Audio playing successfully");
+          })
+          .catch(err => {
+            console.log("Autoplay prevented (waiting for interaction):", err);
+          });
+      }
+    };
+
+    // Try to play immediately
+    playAudio();
+
+    // Add global listeners to capture any interaction
+    const handleInteraction = () => {
+      playAudio();
+    };
+
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('keydown', handleInteraction);
+    window.addEventListener('touchstart', handleInteraction);
 
     return () => {
-      audio.pause();
-      audio.src = "";
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
+      window.removeEventListener('touchstart', handleInteraction);
     };
   }, []);
 
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isMuted) {
-        audioRef.current.pause();
-      } else if (hasInteracted) {
-        audioRef.current.play().catch(() => {
-          // Autoplay was prevented
-          setIsMuted(true);
-        });
-      }
-    }
-  }, [isMuted, hasInteracted]);
-
-  const toggleMute = () => {
-    setHasInteracted(true);
-    setIsMuted(!isMuted);
-  };
-
   return (
-    <button
-      onClick={toggleMute}
-      className="fixed top-4 right-4 z-50 p-3 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 text-primary hover:bg-primary/20 transition-all duration-300 hover:scale-110 group"
-      aria-label={isMuted ? "Unmute music" : "Mute music"}
-    >
-      {isMuted ? (
-        <VolumeX className="w-5 h-5 group-hover:animate-pulse" />
-      ) : (
-        <Volume2 className="w-5 h-5 animate-pulse" />
-      )}
-      
-      {/* Hint text */}
-      <span className="absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap text-xs text-foreground/60 font-elegant tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">
-        {isMuted ? "Play Music" : "Mute"}
-      </span>
-    </button>
+    <audio
+      ref={audioRef}
+      src={MUSIC_URL}
+      loop
+      autoPlay
+      className="hidden"
+    />
   );
 };

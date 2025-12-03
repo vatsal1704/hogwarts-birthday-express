@@ -11,7 +11,7 @@ export const PlatformScene = ({ onComplete }: PlatformSceneProps) => {
 
   const handleRunThrough = () => {
     setIsRunning(true);
-    
+
     setTimeout(() => {
       setShowPortal(true);
     }, 800);
@@ -38,7 +38,7 @@ export const PlatformScene = ({ onComplete }: PlatformSceneProps) => {
       )}
 
       {/* Magical Transition Overlay */}
-      <div 
+      <div
         className={cn(
           "absolute inset-0 bg-background transition-opacity duration-1000",
           showPortal ? "opacity-100" : "opacity-0"
@@ -55,12 +55,12 @@ export const PlatformScene = ({ onComplete }: PlatformSceneProps) => {
       )}>
         {/* Platform Sign */}
         <div className="mb-8 text-center">
-          <div className="inline-block bg-background/80 backdrop-blur-sm border-4 border-primary rounded-lg px-8 py-4 mb-6">
-            <h1 className="font-magical text-3xl md:text-5xl lg:text-6xl text-primary glow-gold">
+          <div className="inline-block bg-background/80 backdrop-blur-sm border-4 border-primary rounded-lg px-6 py-3 md:px-8 md:py-4 mb-6">
+            <h1 className="font-magical text-2xl md:text-5xl lg:text-6xl text-primary glow-gold">
               PLATFORM 9¾
             </h1>
           </div>
-          <p className="font-elegant text-lg md:text-xl text-foreground/80 tracking-widest">
+          <p className="font-elegant text-base md:text-xl text-foreground/80 tracking-widest">
             King's Cross Station
           </p>
         </div>

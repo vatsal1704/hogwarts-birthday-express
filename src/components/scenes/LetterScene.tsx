@@ -55,10 +55,18 @@ export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) =>
       return;
     }
 
-    const timer = setTimeout(() => {
-      setVisibleLines(prev => [...prev, currentIndex]);
+    // Skip empty lines automatically and quickly
+    if (messages[currentIndex].isEmpty) {
       setCurrentIndex(prev => prev + 1);
-    }, messages[currentIndex].isEmpty ? 200 : messages[currentIndex].isTitle ? 800 : 400);
+      return;
+    }
+
+    // Duration should match the CSS animation (4s) plus a small buffer
+    const duration = 4000;
+
+    const timer = setTimeout(() => {
+      setCurrentIndex(prev => prev + 1);
+    }, duration);
 
     return () => clearTimeout(timer);
   }, [currentIndex, messages]);
@@ -67,7 +75,7 @@ export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) =>
     <div className="fixed inset-0 z-50 overflow-hidden">
       {/* Fullscreen dark magical background */}
       <div className="absolute inset-0 bg-gradient-to-b from-midnight via-background to-midnight" />
-      
+
       {/* Magical particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 40 }).map((_, i) => (
@@ -86,12 +94,12 @@ export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) =>
 
       {/* Fullscreen Parchment */}
       <div className="absolute inset-0 flex items-center justify-center p-4 md:p-8">
-        <div 
+        <div
           className="relative w-full h-full max-w-5xl max-h-[90vh] parchment-unroll rounded-lg overflow-hidden"
           style={{ transformOrigin: "top center" }}
         >
           {/* Parchment Background */}
-          <div 
+          <div
             className="absolute inset-0 rounded-lg"
             style={{
               backgroundImage: `url(${parchmentImage})`,
@@ -99,13 +107,13 @@ export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) =>
               backgroundPosition: "center",
             }}
           />
-          
+
           {/* Parchment texture overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-parchment/30 via-transparent to-parchment/40 rounded-lg" />
-          
+
           {/* Decorative border */}
           <div className="absolute inset-4 border-2 border-parchment-dark/20 rounded pointer-events-none" />
-          
+
           {/* Content Container */}
           <div className="relative h-full flex flex-col items-center justify-center p-8 md:p-16 overflow-y-auto">
             {/* Hogwarts Crest/Header */}
@@ -116,42 +124,36 @@ export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) =>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col items-center justify-center text-center space-y-2 md:space-y-3 max-w-2xl">
+            <div className="flex-1 flex flex-col items-center justify-center text-center space-y-4 md:space-y-6 max-w-2xl min-h-[300px]">
               {messages.map((msg, index) => {
-                const isVisible = visibleLines.includes(index);
-                
-                if (msg.isEmpty) {
-                  return <div key={index} className="h-2 md:h-4" />;
-                }
+                // Only render if it's the current index
+                if (index !== currentIndex) return null;
+
+                if (msg.isEmpty) return null;
 
                 return (
                   <div
                     key={index}
-                    className={cn(
-                      "transition-all duration-700 ease-out",
-                      isVisible 
-                        ? "opacity-100 translate-y-0" 
-                        : "opacity-0 translate-y-8"
-                    )}
+                    className="animate-appear-disappear"
                   >
                     {msg.isEmoji ? (
-                      <span className="text-4xl md:text-6xl block mb-4">{msg.text}</span>
+                      <span className="text-5xl md:text-8xl block animate-pulse">{msg.text}</span>
                     ) : msg.isTitle ? (
-                      <h1 className="font-magical text-4xl md:text-6xl lg:text-7xl text-parchment-dark tracking-wide">
+                      <h1 className="font-magical text-4xl md:text-7xl lg:text-8xl text-parchment-dark tracking-wide drop-shadow-md">
                         {msg.text}
                       </h1>
                     ) : msg.isSubtitle ? (
-                      <h2 className="font-magical text-3xl md:text-5xl lg:text-6xl text-primary tracking-wider mt-2">
+                      <h2 className="font-magical text-3xl md:text-6xl lg:text-7xl text-primary tracking-wider drop-shadow-sm">
                         {msg.text}
                       </h2>
                     ) : msg.isSignature ? (
-                      <p className="font-parchment text-lg md:text-xl text-parchment-dark/80 italic">
+                      <p className="font-magical text-xl md:text-3xl text-parchment-dark/80 italic">
                         {msg.text}
                       </p>
                     ) : (
                       <p className={cn(
-                        "font-parchment text-lg md:text-2xl text-parchment-dark leading-relaxed",
-                        msg.text.startsWith("✨") && "text-base md:text-xl"
+                        "font-magical text-xl md:text-4xl text-parchment-dark leading-relaxed",
+                        msg.text.startsWith("✨") && "text-lg md:text-2xl"
                       )}>
                         {msg.text}
                       </p>
@@ -187,6 +189,17 @@ export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) =>
       )}
 
       <style>{`
+        @keyframes appearDisappear {
+          0% { opacity: 0; transform: scale(0.9); filter: blur(4px); }
+          10% { opacity: 1; transform: scale(1); filter: blur(0); }
+          80% { opacity: 1; transform: scale(1); filter: blur(0); }
+          100% { opacity: 0; transform: scale(1.1); filter: blur(2px); }
+        }
+
+        .animate-appear-disappear {
+          animation: appearDisappear 4s ease-in-out forwards;
+        }
+
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
