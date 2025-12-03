@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MagicParticles } from "@/components/MagicParticles";
+import { MusicPlayer } from "@/components/MusicPlayer";
 import { PlatformScene } from "@/components/scenes/PlatformScene";
 import { HogwartsScene } from "@/components/scenes/HogwartsScene";
 import { GatesScene } from "@/components/scenes/GatesScene";
@@ -29,6 +30,9 @@ const Index = () => {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-background">
+      {/* Background Music Player */}
+      <MusicPlayer />
+
       {/* Magic Particles (visible in most scenes) */}
       {currentScene !== "letter" && <MagicParticles />}
 
