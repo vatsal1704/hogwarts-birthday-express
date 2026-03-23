@@ -38,7 +38,7 @@ const birthdayMessages: MessageLine[] = [
   { text: "Your Secret Admirer ⚡", isSignature: true },
 ];
 
-export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) => {
+export const LetterScene = ({ recipientName = "Ayushi" }: LetterSceneProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleLines, setVisibleLines] = useState<number[]>([]);
   const [isComplete, setIsComplete] = useState(false);
