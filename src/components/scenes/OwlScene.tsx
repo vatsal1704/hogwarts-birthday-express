@@ -97,7 +97,7 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
               {/* Name on envelope */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <p className="font-magical text-parchment-dark text-lg md:text-xl mt-4 tracking-wider">
-                  Kanishka
+                  Ayushi
                 </p>
               </div>
             </div>
