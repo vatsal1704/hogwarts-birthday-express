@@ -46,7 +46,7 @@ export const LetterScene = ({ recipientName = "Ayushi" }: LetterSceneProps) => {
   // Replace name in messages
   const messages = birthdayMessages.map(msg => ({
     ...msg,
-    text: msg.text.replace("Kanishka", recipientName)
+    text: msg.text.replace("Ayushi", recipientName)
   }));
 
   useEffect(() => {

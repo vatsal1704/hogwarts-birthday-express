@@ -118,7 +118,7 @@ export const OwlScene = ({ onLetterClick }: OwlSceneProps) => {
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-start pt-20 px-4">
         <h2 className="font-magical text-3xl md:text-5xl text-primary glow-gold text-center mb-4">
-          {!showLetter ? "An Owl Approaches" : "A Letter for Kanishka"}
+          {!showLetter ? "An Owl Approaches" : "A Letter for Ayushi"}
         </h2>
         <p className="font-elegant text-lg md:text-xl text-foreground/80 tracking-widest text-center">
           {!showLetter ? "A message from afar..." : "Your magical letter has arrived!"}
