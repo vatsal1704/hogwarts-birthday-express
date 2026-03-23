@@ -18,7 +18,7 @@ const birthdayMessages: MessageLine[] = [
   { text: "✨", isEmoji: true },
   { text: "", isEmpty: true },
   { text: "Happy Birthday", isTitle: true },
-  { text: "Kanishka", isSubtitle: true },
+  { text: "Ayushi", isSubtitle: true },
   { text: "", isEmpty: true },
   { text: "", isEmpty: true },
   { text: "On this most magical of days,", isSignature: false },
@@ -38,7 +38,7 @@ const birthdayMessages: MessageLine[] = [
   { text: "Your Secret Admirer ⚡", isSignature: true },
 ];
 
-export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) => {
+export const LetterScene = ({ recipientName = "Ayushi" }: LetterSceneProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleLines, setVisibleLines] = useState<number[]>([]);
   const [isComplete, setIsComplete] = useState(false);
@@ -46,7 +46,7 @@ export const LetterScene = ({ recipientName = "Kanishka" }: LetterSceneProps) =>
   // Replace name in messages
   const messages = birthdayMessages.map(msg => ({
     ...msg,
-    text: msg.text.replace("Kanishka", recipientName)
+    text: msg.text.replace("Ayushi", recipientName)
   }));
 
   useEffect(() => {

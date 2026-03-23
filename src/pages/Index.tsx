@@ -54,7 +54,7 @@ const Index = () => {
       )}
 
       {currentScene === "letter" && (
-        <LetterScene recipientName="Kanishka" />
+        <LetterScene recipientName="Ayushi" />
       )}
     </main>
   );
