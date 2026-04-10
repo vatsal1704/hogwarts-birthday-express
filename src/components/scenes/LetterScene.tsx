@@ -18,7 +18,7 @@ const birthdayMessages: MessageLine[] = [
   { text: "✨", isEmoji: true },
   { text: "", isEmpty: true },
   { text: "Happy Birthday", isTitle: true },
-  { text: "Aayushi", isSubtitle: true },
+  { text: "Kanishka", isSubtitle: true },
   { text: "", isEmpty: true },
   { text: "", isEmpty: true },
   { text: "On this most magical of days,", isSignature: false },
